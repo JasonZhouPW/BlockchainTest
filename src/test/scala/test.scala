@@ -53,7 +53,10 @@ object test extends App{
   println(s"readblock:$readBlock")
   println(readBlock.blockData.trans.head.chaincodeParams)*/
 
+
   val list = List(1,2,3,4,5,6,7)
 
-  println(list.takeRight(3))
+  val newlist = list.sortWith(_ > _)
+
+  println(newlist)
 }

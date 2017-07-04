@@ -1,11 +1,13 @@
 package com.wanda.blockchain.common.db.model
 
+import java.util
+
 import com.sleepycat.persist.model.{Entity, PrimaryKey, SecondaryKey}
 import com.wanda.blockchain.common.block.BlockTrans
 import com.sleepycat.persist.model.Relationship._
 
 import scala.beans.BeanProperty
-
+import scala.collection.JavaConverters._
 /**
   * Created by Zhou peiwen on 2017/6/29.
   */
@@ -29,10 +31,10 @@ class BlockTransaction {
   var chaincodeMethod:String = _
 
   @BeanProperty
-  var chaincodeParams:List[String] = _
+  var chaincodeParams:java.util.ArrayList[String] = _
 
   @BeanProperty
-  var subTrans:List[TransactionObject] = _
+  var subTransIDs:java.util.ArrayList[String] = _
 
   @BeanProperty
   @SecondaryKey(relate = MANY_TO_ONE)
@@ -55,31 +57,31 @@ class BlockTransaction {
     this.chaincodeName = chaincodeName
     this.chaincodeVersion = chaincodeVersion
     this.chaincodeMethod = chaincodeMethod
-    this.chaincodeParams = chaincodeParams
-    this.subTrans = subTrans
+    this.chaincodeParams = new util.ArrayList(chaincodeParams.asJava)
+    this.subTransIDs = new util.ArrayList(subTrans.map(_.txID).asJava)
   }
 
   def this(bts:BlockTrans) = {
     this
     this.transactionID = bts.transID
     this.userID = bts.userID
-    this.chaincodeParams = bts.chaincodeParams
+    this.chaincodeParams = new util.ArrayList(bts.chaincodeParams.asJava)
     this.chaincodeMethod = bts.chaincodeMethod
     this.chaincodeName = bts.chaincodeName
     this.chaincodeVersion =bts.chaincodeVersion
-    this.subTrans = bts.subTrans.map(t => new TransactionObject(t))
+    this.subTransIDs = new util.ArrayList(bts.subTrans.map(_.txID).asJava)
   }
 
-  def toBlockTrans = {
-    new BlockTrans(this.transactionID,
-                  this.userID,
-      this.chaincodeName,
-      this.chaincodeVersion,
-      this.chaincodeMethod,
-      this.chaincodeParams,
-      this.subTrans.map(_.toTransInfo))
-  }
+//  def toBlockTrans = {
+//    new BlockTrans(this.transactionID,
+//                  this.userID,
+//      this.chaincodeName,
+//      this.chaincodeVersion,
+//      this.chaincodeMethod,
+//      this.chaincodeParams.asScala.toList,
+//      this.subTrans.asScala.toList.map(_.toTransInfo))
+//  }
 
 
-  override def toString = s"BlockTransaction(transactionID=$transactionID, userID=$userID, chaincodeName=$chaincodeName, chaincodeVersion=$chaincodeVersion, chaincodeMethod=$chaincodeMethod, chaincodeParams=$chaincodeParams, subTrans=$subTrans,status=$status)"
+  override def toString = s"BlockTransaction(transactionID=$transactionID, userID=$userID, chaincodeName=$chaincodeName, chaincodeVersion=$chaincodeVersion, chaincodeMethod=$chaincodeMethod, chaincodeParams=$chaincodeParams, subTransIDs=$subTransIDs, status=$status, inBlockHash=$inBlockHash)"
 }

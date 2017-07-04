@@ -23,12 +23,13 @@ class JEDBStoreObject(store: EntityStore) extends DBObject {
           true
         case to: TransactionObject  =>
           val pk = store.getPrimaryIndex(classOf[String], classOf[TransactionObject])
+          println(s"to:$to")
           pk.put(txn, to)
           true
-        case ti: TransInfo =>
-          val pk = store.getPrimaryIndex(classOf[String], classOf[TransactionObject])
-          pk.put(txn, new TransactionObject(ti))
-          true
+//        case ti: TransInfo =>
+//          val pk = store.getPrimaryIndex(classOf[String], classOf[TransactionObject])
+//          pk.put(txn, new TransactionObject(ti))
+//          true
         case lb: LatestBlock =>
           val pk = store.getPrimaryIndex(classOf[String], classOf[LatestBlock])
           pk.put(txn, lb)
@@ -48,6 +49,7 @@ class JEDBStoreObject(store: EntityStore) extends DBObject {
 
         case tx:BlockTransaction =>
           val pk = store.getPrimaryIndex(classOf[String],classOf[BlockTransaction])
+          println(s"tx:$tx")
           pk.put(txn,tx)
           true
           //just for test
@@ -60,7 +62,7 @@ class JEDBStoreObject(store: EntityStore) extends DBObject {
           true
       }
     } catch {
-      case e: Exception =>
+      case e: Exception =>e.printStackTrace()
         false
     }
 
@@ -96,9 +98,11 @@ class JEDBStoreObject(store: EntityStore) extends DBObject {
       while(i.hasNext){
         lb.append(i.next())
       }
+      sCursor.close()
       lb.toList
     }catch{
-      case e:Exception =>Nil
+      case e:Exception =>e.printStackTrace()
+        Nil
     }
 
   }

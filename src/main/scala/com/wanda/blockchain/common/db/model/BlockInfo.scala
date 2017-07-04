@@ -15,7 +15,7 @@ class BlockInfo {
   var dataHash:String = _
 
   @BeanProperty
-  @SecondaryKey(relate = ONE_TO_ONE)
+//  @SecondaryKey(relate = ONE_TO_ONE)
   var blockNumber:Long = _
 
   @BeanProperty

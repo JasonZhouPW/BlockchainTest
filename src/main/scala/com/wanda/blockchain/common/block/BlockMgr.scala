@@ -1,8 +1,9 @@
 package com.wanda.blockchain.common.block
 
 import com.wanda.blockchain.common.db.DBStore
-import com.wanda.blockchain.common.db.model.{BlockChainInfo, BlockInfo, BlockTransaction, LatestBlock}
+import com.wanda.blockchain.common.db.model._
 
+import scala.collection.JavaConverters._
 /**
   * Created by Zhou peiwen on 2017/6/29.
   */
@@ -41,7 +42,15 @@ object BlockMgr {
     true
   }
 
-  def addBlockTrans(bt:BlockTrans):Boolean = {
+  def addBlockTrans(chainName:String,bt:BlockTrans):Boolean = {
+
+    val dbStore = DBStore.getDB(chainName)
+    val tx = dbStore.getEnv.beginTransaction(null,null)
+    val blockTransaction = new BlockTransaction(bt)
+    val subtrans = bt.subTrans.map(new TransactionObject(_))
+    subtrans.foreach(dbStore.put(_,tx))
+    dbStore.put(blockTransaction,tx)
+    tx.commit()
     true
   }
 
@@ -59,53 +68,80 @@ object BlockMgr {
 
   def serializeBlock(chainName:String):Boolean  = {
     val dbstore = DBStore.getDB(chainName)
-    val tx = dbstore.getEnv.beginTransaction(null,null)
-    try{
+
+//    try{
       //get all blockTransaction with status 0
 
-      val list = dbstore.getListBySencond("0",classOf[BlockTransaction],"status").asInstanceOf[List[BlockTransaction]]
-
+      val list = dbstore.getListBySencond("0",classOf[BlockTransaction],"status")
+      println(s"in serializeBlock list:$list")
       if(!list.isEmpty){
-
+        val nList = list.map(_.asInstanceOf[BlockTransaction])
         //generate block based on the trans
-        val block = generateBlock(chainName,list)
+        val block = generateBlock(chainName,nList)
         val dataHash = block.blockHeader.dataHash
         val blockNum = block.blockHeader.number
         //undate the status to "1"(serialized) and update the inBlockHash
-
-        list.foreach(bl => {
+        var tx = dbstore.getEnv.beginTransaction(null,null)
+        nList.foreach(bl => {
+          println(s"in loop :$bl")
           bl.setStatus("1")
           bl.setInBlockHash(dataHash)
           dbstore.put(bl,tx)
         })
-
+        println("1")
+//        tx.commit()
+//        tx = dbstore.getEnv.beginTransaction(null,null)
         //1. update latest block
         val latestBlock = new LatestBlock(blockNum,block.blockHeader.dataHash)
         dbstore.put(latestBlock,tx)
+        println("2")
         //2. save the block
         val blockInfo = new BlockInfo(dataHash,blockNum,block.toBytes)
         dbstore.put(blockInfo,tx)
+        println("3")
         //3. update the blockchain info
         val blockChainInfo = new BlockChainInfo(chainName,blockNum,dataHash,block.blockHeader.previousHash)
         dbstore.put(blockInfo,tx)
-
+        tx.commit()
         //write block file
         BlockFileMgr.writeBlock(block,blockNum)
 
       }
-      tx.commit()
+
       true
-    }catch{
-      case e:Exception =>
-        tx.abort()
-        false
-    }
+//    }catch{
+//      case e:Exception =>e.printStackTrace()
+//        tx.abort()
+//        false
+//    }
 
   }
 
 
+  private def generateBlockData(chainName:String,trans:List[BlockTransaction]):BlockData = {
+    val transInfo = trans.map( t => new BlockTrans(transID = t.transactionID,
+      userID = t.userID,
+      chaincodeName = t.chaincodeName,
+      chaincodeVersion = t.chaincodeVersion,
+      chaincodeMethod = t.chaincodeMethod,
+      chaincodeParams = t.chaincodeParams.asScala.toList,
+      t.subTransIDs.asScala.toList.map(id => getTransObjectByID(chainName,id))))
+    new BlockData(transInfo)
+  }
+
+  private def getTransObjectByID(chainName:String,id:String):TransInfo = {
+    val dBStore = DBStore.getDB(chainName)
+    val transObj = dBStore.get(id,classOf[TransactionObject])
+    if(transObj != null){
+      val newObject = transObj.asInstanceOf[TransactionObject]
+      new TransInfo(newObject.txID,newObject.key,newObject.valFrom,newObject.valTo)
+    }else{
+      null
+    }
+  }
+
   private def generateBlock(chainName:String,trans:List[BlockTransaction]):Block ={
-    val blockData = new BlockData(trans.map(_.toBlockTrans))
+    val blockData = generateBlockData(chainName,trans)
     val blockMeta = generateBlockMeta
 
 
