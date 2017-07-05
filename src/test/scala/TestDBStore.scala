@@ -28,21 +28,20 @@ object TestDBStore extends App{
 
     val to = dbo.get("00000004",classOf[TransactionObject])
     println(to.asInstanceOf[TransactionObject])
-/*
     trans = env.beginTransaction(null,null)
-    var lb = new LatestBlock(1,"abcdef12345")
+
     val lb2 = new LatestBlock(2,"abcdef12346")
     val lb3 = new LatestBlock(3,"abcdef12347")
     val lb4 = new LatestBlock(4,"abcdef12348")
 
-    dbo.put(lb.getKey,lb,trans)
-    dbo.put(lb2.getKey,lb2,trans)
-    dbo.put(lb3.getKey,lb3,trans)
-    dbo.put(lb4.getKey,lb4,trans)
+
+    dbo.put(lb2,trans)
+    dbo.put(lb3,trans)
+    dbo.put(lb4,trans)
 //    trans.abort()
 //    trans = env.beginTransaction(null,null)
 //    dbo.put(lb.getKey,lb,trans)
-    trans.commit()*/
+    trans.commit()
 
     val lbl = dbo.get("LATEST_BLOCK",classOf[LatestBlock])
     println("lbl:"+lbl)

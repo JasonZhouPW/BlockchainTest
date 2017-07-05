@@ -4,6 +4,8 @@ import com.wanda.blockchain.common.block._
 import com.wanda.blockchain.common.db.model.{BlockTransaction, TransactionObject}
 import com.wanda.blockchain.common.util.DigestUtil
 
+import scala.reflect.ClassTag
+import scala.reflect._
 /**
   * Created by Zhou peiwen on 2017/6/23.
   */
@@ -54,9 +56,22 @@ object test extends App{
   println(readBlock.blockData.trans.head.chaincodeParams)*/
 
 
-  val list = List(1,2,3,4,5,6,7)
+//  val list = List(1,2,3,4,5,6,7)
+//
+//  val newlist = list.sortWith(_ > _)
+//
+//  println(newlist)
 
-  val newlist = list.sortWith(_ > _)
+  test("a" ,"B")
+  test(1,"2")
 
-  println(newlist)
+  def test[T:ClassTag](v:T,u:T) = {
+    println(classTag[T].runtimeClass)
+    plus(v,u)
+
+  }
+
+  def plus[T](a:T,b:T) = {
+    println(a.toString + b.toString)
+  }
 }

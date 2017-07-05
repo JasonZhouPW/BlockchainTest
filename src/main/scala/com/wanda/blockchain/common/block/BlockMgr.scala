@@ -75,14 +75,14 @@ object BlockMgr {
       val list = dbstore.getListBySencond("0",classOf[BlockTransaction],"status")
       println(s"in serializeBlock list:$list")
       if(!list.isEmpty){
-        val nList = list.map(_.asInstanceOf[BlockTransaction])
+//        val nList = list.map(_.asInstanceOf[BlockTransaction])
         //generate block based on the trans
-        val block = generateBlock(chainName,nList)
+        val block = generateBlock(chainName,list)
         val dataHash = block.blockHeader.dataHash
         val blockNum = block.blockHeader.number
         //undate the status to "1"(serialized) and update the inBlockHash
         var tx = dbstore.getEnv.beginTransaction(null,null)
-        nList.foreach(bl => {
+        list.foreach(bl => {
           println(s"in loop :$bl")
           bl.setStatus("1")
           bl.setInBlockHash(dataHash)

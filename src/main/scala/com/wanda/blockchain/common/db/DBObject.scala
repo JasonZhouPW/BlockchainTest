@@ -2,6 +2,8 @@ package com.wanda.blockchain.common.db
 
 import com.sleepycat.je.{DatabaseEntry, Environment, Transaction}
 
+import scala.reflect.ClassTag
+
 /**
   * Created by Zhou peiwen on 2017/6/27.
   */
@@ -16,15 +18,15 @@ trait DBObject {
 
   def isClose:Boolean
 
-  def put(value:Any,tx:Transaction):Boolean
+  def put[T:Manifest](value:T,tx:Transaction):Boolean
 
-  def get(key:String,clazz:Class[_]):Any
+  def get[T](key:String,clazz:Class[T]):T
 
-  def deleteByPK(key:String,clazz:Class[_],tx:Transaction):Any
+  def deleteByPK[T](key:String,clazz:Class[T],tx:Transaction):Boolean
 
-  def getSecond(key:String,clazz:Class[_],skName:String):Any
+  def getSecond[T](key:String,clazz:Class[T],skName:String):T
 
-  def getListBySencond(secondKey:String,clazz:Class[_],skName:String):List[Any]
+  def getListBySencond[T](secondKey:String,clazz:Class[T],skName:String):List[T]
 
   def close:Unit
 

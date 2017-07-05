@@ -23,6 +23,7 @@ object TestmutipleRecords extends App{
 
   val obj1 = dbstore.get("1",classOf[TestObject])
   println(obj1)
+  println(obj1.id)
 
 //  val list = dbstore.getListBySencond("abc",classOf[TestObject],"name")
 //  println(list)
