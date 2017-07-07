@@ -62,7 +62,7 @@ object test extends App{
 //
 //  println(newlist)
 
-  test("a" ,"B")
+/*  test("a" ,"B")
   test(1,"2")
 
   def test[T:ClassTag](v:T,u:T) = {
@@ -73,5 +73,13 @@ object test extends App{
 
   def plus[T](a:T,b:T) = {
     println(a.toString + b.toString)
+  }*/
+
+  println(getGetterName("id"))
+
+  def getGetterName(fieldName:String):String = {
+    "get"+fieldName.toUpperCase.substring(0,1) + fieldName.substring(1,fieldName.length)
   }
+
+
 }
