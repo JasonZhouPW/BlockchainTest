@@ -20,7 +20,7 @@ class CCLoader {
       }).toList
 
       val jarFilePathArr = jarFilesArr.map(jar =>new URL(filePrefix + jarPath+ File.separator + jar.getName))
-      this.classLoader = new URLClassLoader(jarFilePathArr.toArray)
+      this.classLoader = new URLClassLoader(jarFilePathArr.toArray,ClassLoader.getSystemClassLoader)
     }
   }
 

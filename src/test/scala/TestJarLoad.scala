@@ -1,11 +1,13 @@
 import com.wanda.blockchain.common.chaincode.CCLoader
+import com.wanda.blockchain.common.db.DBStore
 
 /**
   * Created by Zhou peiwen on 2017/7/4.
   */
 object TestJarLoad extends App{
 
-  val directory = "c:/work/temp/testjar"
+//  val directory = "c:/work/temp/testjar"
+  val directory = "C:\\work\\go\\src\\github.com\\hyperledger\\BlockchainTest\\target\\classes"
 
   val loader = new CCLoader
   loader.loadPath(directory)
@@ -34,10 +36,23 @@ object TestJarLoad extends App{
   println(s"l:$l,${l.length}")
   println("name:"+l.head.getName)
 
+  val ui = loader.loadClass("com.test.UserInfo")
+  println(ui.getClass.getAnnotations.foreach(a => println("===="+a.annotationType())))
 
 
 
 
+//  val threadLoader = ClassLoader.getSystemClassLoader
+//  val c = Class.forName("com.test.UserInfo",true,threadLoader).newInstance()
+  val c = Class.forName("com.test.UserInfo").newInstance()
+  println(c)
+
+
+//  val store = DBStore.getDB("TEST")
+//  val tx = store.getEnv.beginTransaction(null,null)
+//  store.put()
+//
+//
 //  val method = hello.getClass.getDeclaredMethod("sayHi",null)
 //  println(method.invoke(hello,null))
 

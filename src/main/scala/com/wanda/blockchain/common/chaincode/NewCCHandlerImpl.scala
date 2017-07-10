@@ -52,7 +52,7 @@ class NewCCHandlerImpl extends CCHandlerInterface{
       val method =  entity.getClass.getMethod(getGetterName(fieldname))
       //      val fieldValue =
       val value = method.invoke(entity)
-      val oldval = dbObject.get(value.toString,entity.getClass)
+      val oldval = dbObject.get(value.toString,clazz)
       println(s"oldval:$oldval")
       val trans = new TransInfo(fieldname,generateSubTxID,if(oldval == null)"" else oldval.toString,entity.toString)
       transInfos.append(trans)

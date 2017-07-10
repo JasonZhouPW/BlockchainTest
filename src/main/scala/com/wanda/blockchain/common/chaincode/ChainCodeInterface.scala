@@ -5,9 +5,13 @@ package com.wanda.blockchain.common.chaincode
   */
 trait ChainCodeInterface {
 
+  def setHandler(cCHandlerInterface: CCHandlerInterface):Unit
+
+  def getHandler:CCHandlerInterface
+
   def init:Unit
 
-  def invoke(param:java.util.ArrayList[String]):CCResponse
+  def invoke(method:String,param:java.util.ArrayList[String]):CCResponse
 
 }
 
