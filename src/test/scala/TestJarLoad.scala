@@ -6,13 +6,18 @@ import com.wanda.blockchain.common.db.DBStore
   */
 object TestJarLoad extends App{
 
-//  val directory = "c:/work/temp/testjar"
-  val directory = "C:\\work\\go\\src\\github.com\\hyperledger\\BlockchainTest\\target\\classes"
+  val directory = "c:/work/temp/testjar"
+//  val directory = "C:\\work\\go\\src\\github.com\\hyperledger\\BlockchainTest\\target\\classes"
+
+  val jarName="TestJarLoad-1.0-SNAPSHOT.jar"
 
   val loader = new CCLoader
-  loader.loadPath(directory)
+//  loader.loadPath(directory)
+  loader.loadJar(directory + "/"+jarName)
 
+/*
   val hello = loader.loadClass("com.test.Hello")
+
 
   val methods = hello.getClass.getDeclaredMethods
   methods.toList.foreach(println)
@@ -40,13 +45,14 @@ object TestJarLoad extends App{
   println(ui.getClass.getAnnotations.foreach(a => println("===="+a.annotationType())))
 
 
-
+  val su = ClassLoader.getSystemClassLoader.loadClass("com.test.UserInfo")
 
 //  val threadLoader = ClassLoader.getSystemClassLoader
 //  val c = Class.forName("com.test.UserInfo",true,threadLoader).newInstance()
   val c = Class.forName("com.test.UserInfo").newInstance()
   println(c)
 
+*/
 
 //  val store = DBStore.getDB("TEST")
 //  val tx = store.getEnv.beginTransaction(null,null)
