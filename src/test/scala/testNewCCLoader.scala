@@ -10,7 +10,7 @@ object testNewCCLoader extends App{
 
   val jarName="TestJarLoad-1.0-SNAPSHOT.jar"
   val newLoader = new NewCCLoader
-  newLoader.loadJarFIle(directory+"/"+jarName)
+  newLoader.loadJarFile(directory+"/"+jarName)
 
   val c = Class.forName("com.test.UserInfo")
 

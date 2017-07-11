@@ -3,6 +3,7 @@ import java.util
 import com.wanda.blockchain.common.block.BlockMgr
 import com.wanda.blockchain.common.chaincode.{CCLoader, ChainCodeInterface, NewCCHandlerImpl, NewCCLoader}
 import com.wanda.blockchain.common.db.DBStore
+import sun.misc.ClassLoaderUtil
 
 import scala.collection.JavaConverters._
 /**
@@ -12,10 +13,14 @@ object TestChainCode extends App{
 
 
   val directory = "c:/work/temp/testjar"
+  val directory2 = "C:\\work\\go\\src\\github.com\\hyperledger\\TestJarLoad\\target"
   val jarfile = "TestJarLoad-1.0-SNAPSHOT.jar"
   val chainName = "MyCC"
   val loader = new NewCCLoader
-  loader.loadJarFIle(directory+"/"+jarfile)
+  loader.loadJarFile(directory+"/"+jarfile)
+//  ClassLoaderUtil.releaseLoader(loader)
+  //test load mutiple jars
+
 //    BlockMgr.initChain(chainName)
   val chainCode = Class.forName("com.test.MyCC").newInstance().asInstanceOf[ChainCodeInterface]
   println(chainCode)
@@ -43,4 +48,14 @@ object TestChainCode extends App{
 
   BlockMgr.addBlockTrans(chainName,cchandler.getBlockTrans)
   BlockMgr.serializeBlock(chainName)
+
+/*
+  // will use docker(or other sandbox to update the java chaincode!
+  loader.loadJarFile(directory2+"/"+jarfile)
+  val chainCode2 = Class.forName("com.test.MyCC").newInstance().asInstanceOf[ChainCodeInterface]
+  println(chainCode2)
+
+  chainCode2.init*/
+
+
 }
