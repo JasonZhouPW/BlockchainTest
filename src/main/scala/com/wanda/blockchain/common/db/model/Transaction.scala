@@ -37,6 +37,9 @@ class BlockTransaction {
   var subTransIDs:java.util.ArrayList[String] = _
 
   @BeanProperty
+  var timestamp:Long = _
+
+  @BeanProperty
   @SecondaryKey(relate = MANY_TO_ONE)
   var status:String = "0"
 
@@ -59,6 +62,7 @@ class BlockTransaction {
     this.chaincodeMethod = chaincodeMethod
     this.chaincodeParams = new util.ArrayList(chaincodeParams.asJava)
     this.subTransIDs = new util.ArrayList(subTrans.map(_.txID).asJava)
+    this.timestamp = System.nanoTime()
   }
 
   def this(bts:BlockTrans) = {
@@ -70,6 +74,7 @@ class BlockTransaction {
     this.chaincodeName = bts.chaincodeName
     this.chaincodeVersion =bts.chaincodeVersion
     this.subTransIDs = new util.ArrayList(bts.subTrans.map(_.txID).asJava)
+    this.timestamp = bts.timestamp
   }
 
 //  def toBlockTrans = {
@@ -83,5 +88,5 @@ class BlockTransaction {
 //  }
 
 
-  override def toString = s"BlockTransaction(transactionID=$transactionID, userID=$userID, chaincodeName=$chaincodeName, chaincodeVersion=$chaincodeVersion, chaincodeMethod=$chaincodeMethod, chaincodeParams=$chaincodeParams, subTransIDs=$subTransIDs, status=$status, inBlockHash=$inBlockHash)"
+  override def toString = s"BlockTransaction(transactionID=$transactionID, userID=$userID, chaincodeName=$chaincodeName, chaincodeVersion=$chaincodeVersion, chaincodeMethod=$chaincodeMethod, chaincodeParams=$chaincodeParams, subTransIDs=$subTransIDs, status=$status, inBlockHash=$inBlockHash,timestamp=$timestamp)"
 }

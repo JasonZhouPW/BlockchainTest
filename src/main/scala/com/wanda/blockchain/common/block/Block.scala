@@ -23,6 +23,7 @@ case class BlockTrans(transID:String,
                       chaincodeVersion:String,
                       chaincodeMethod:String,
                       chaincodeParams:List[String],
-                      subTrans:List[TransInfo])
+                      subTrans:List[TransInfo],
+                      timestamp:Long = System.nanoTime())
 
 case class TransInfo(txID:String,key:String,valFrom:String,valTo :String)

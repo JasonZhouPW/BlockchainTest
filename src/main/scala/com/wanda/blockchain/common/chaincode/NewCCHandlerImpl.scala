@@ -54,7 +54,7 @@ class NewCCHandlerImpl extends CCHandlerInterface{
       val value = method.invoke(entity)
       val oldval = dbObject.get(value.toString,clazz)
       println(s"oldval:$oldval")
-      val trans = new TransInfo(fieldname,generateSubTxID,if(oldval == null)"" else oldval.toString,entity.toString)
+      val trans = new TransInfo(generateSubTxID,fieldname,if(oldval == null)"" else oldval.toString,entity.toString)
       transInfos.append(trans)
 
       val tx = dbObject.getEnv.beginTransaction(null,null)
@@ -91,13 +91,17 @@ class NewCCHandlerImpl extends CCHandlerInterface{
     this.transID = generateTxID
   }
 
-  override def end(): Unit = this.blockTrans = new BlockTrans(this.transID,
-    this.userID,
-    this.chaincodeName,
-    this.chaincodeVersion,
-    this.methodName,
-    this.params,
-    this.transInfos.toList)
+  override def end(): Unit = {
+    this.blockTrans = new BlockTrans(this.transID,
+                          this.userID,
+                          this.chaincodeName,
+                          this.chaincodeVersion,
+                          this.methodName,
+                          this.params,
+                          this.transInfos.toList)
+
+    this.transInfos.clear()
+  }
 
   private def generateSubTxID:String = {
     "ST_"+UUID.randomUUID().toString.replaceAll("-","")

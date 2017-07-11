@@ -72,7 +72,7 @@ object BlockMgr {
 //    try{
       //get all blockTransaction with status 0
 
-      val list = dbstore.getListBySencond("0",classOf[BlockTransaction],"status")
+      val list = dbstore.getListBySencond("0",classOf[BlockTransaction],"status").sortWith(_.timestamp < _.timestamp)
       println(s"in serializeBlock list:$list")
       if(!list.isEmpty){
 //        val nList = list.map(_.asInstanceOf[BlockTransaction])
@@ -101,7 +101,7 @@ object BlockMgr {
         println("3")
         //3. update the blockchain info
         val blockChainInfo = new BlockChainInfo(chainName,blockNum,dataHash,block.blockHeader.previousHash)
-        dbstore.put(blockInfo,tx)
+        dbstore.put(blockChainInfo,tx)
         tx.commit()
         //write block file
         BlockFileMgr.writeBlock(block,blockNum)
@@ -125,7 +125,9 @@ object BlockMgr {
       chaincodeVersion = t.chaincodeVersion,
       chaincodeMethod = t.chaincodeMethod,
       chaincodeParams = t.chaincodeParams.asScala.toList,
-      t.subTransIDs.asScala.toList.map(id => getTransObjectByID(chainName,id))))
+      t.subTransIDs.asScala.toList.map(id => getTransObjectByID(chainName,id)),
+      timestamp = t.timestamp
+      ))
     new BlockData(transInfo)
   }
 
