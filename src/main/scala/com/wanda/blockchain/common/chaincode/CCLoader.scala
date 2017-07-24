@@ -6,8 +6,10 @@ import java.util.jar.JarFile
 
 /**
   * Created by Zhou peiwen on 2017/7/4.
+  * Use NewCCLoader
   */
-class CCLoader {
+@Deprecated
+  class CCLoader {
 
   private[this] var classLoader:ClassLoader = _
   private[this] val filePrefix:String = "file:\\"
@@ -41,6 +43,8 @@ class CCLoader {
 //          Class.forName(clazzName)
         }
       }
+    }catch{
+      case e:Exception =>
     }
 
 
