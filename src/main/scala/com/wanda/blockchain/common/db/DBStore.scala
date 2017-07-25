@@ -14,7 +14,7 @@ import scala.collection.mutable.{Map => mMap}
 
 //using JeDB DPL
 object DBStore {
-  val envHome = new File("c:/work/temp/export/dbEnv")
+  val envHome = new File("c:/work/temp/export/dbEnv2")
   val envConfig = new EnvironmentConfig
   var env: Environment = null
   var dbMap: mMap[String, DBObject] = mMap[String, DBObject]()

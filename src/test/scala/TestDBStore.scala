@@ -78,8 +78,8 @@ object TestDBStore extends App{
     val bl = dbo.get(datahash,classOf[BlockInfo])
     println(bl)
 
-    val bl2 = dbo.getSecond("1",classOf[BlockInfo],"blockNumber")
-    println(s"bl2:$bl2")
+//    val bl2 = dbo.getSecond("1",classOf[BlockInfo],"blockNumber")
+//    println(s"bl2:$bl2")
 
 
     val lbll = dbo.get("LATEST_BLOCK",classOf[LatestBlock])

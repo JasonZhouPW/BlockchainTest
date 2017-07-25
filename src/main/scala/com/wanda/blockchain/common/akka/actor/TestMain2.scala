@@ -10,5 +10,6 @@ object TestMain2 extends App{
 
 
   startup(List("2551"))
+  println(getSelfAddress.toString)
 
 }

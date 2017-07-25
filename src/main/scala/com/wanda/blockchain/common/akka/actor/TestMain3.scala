@@ -10,5 +10,5 @@ object TestMain3 extends App{
 
   val svrActor = system.actorOf(Props[ServiceActor],"ServiceActor")
 
-  svrActor ! new InstallChainCodeMsg("test",null)
+//  svrActor ! new InstallChainCodeMsg("test",null)
 }

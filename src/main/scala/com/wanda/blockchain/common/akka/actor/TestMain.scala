@@ -1,6 +1,7 @@
 package com.wanda.blockchain.common.akka.actor
 
 import akka.actor.Props
+import akka.cluster.Cluster
 import com.wanda.blockchain.common.akka.cluster.ClusterManager
 
 /**
@@ -9,9 +10,11 @@ import com.wanda.blockchain.common.akka.cluster.ClusterManager
 object TestMain extends App{
   import com.wanda.blockchain.common.akka.cluster.ClusterManager._
 
-
   init("2552")
   val svrActor = system.actorOf(Props[ServiceActor],"ServiceActor")
+
+
+  println("self addr:"+ getSelfAddress.toString)
 
   for(i <- 1 to 100){
     svrActor ! new CreateChannelMsg("Test1")
