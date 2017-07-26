@@ -17,4 +17,9 @@ public class CCResponse {
     }
 
     public CCResponse(){}
+
+    @Override
+    public String toString() {
+        return "CCResponse[" + res + "]";
+    }
 }

@@ -20,7 +20,7 @@ case class CreateChannelMsg(dbName:String)
 
 case class InstallChainCodeMsg(userName:String,chainname:String,chaincodeName:String,chaincodeVersion:String,chaincodeClassFullName:String,jarFileName:String)
 
-case class InvokeChainCodeMsg()
+case class InvokeChainCodeMsg(userName:String,chainname:String,chaincodeName:String,chaincodeVersion:String,methodName:String,params:java.util.ArrayList[String])
 
 class ServiceActor extends Actor{
 
@@ -44,10 +44,7 @@ class ServiceActor extends Actor{
         //tell sender the db is exists
       }
 
-      //todo how to get selfID??
       mediator ! Publish(ClusterManager.topicName,new CreateChannelACKMsg(selfAddress,0,"OK"))
-
-
 
 
     case msg:InstallChainCodeMsg =>
@@ -57,24 +54,23 @@ class ServiceActor extends Actor{
       ChainCodeMgr.installChainCode(msg.chaincodeName,msg.chaincodeClassFullName,ccDirectory + "/" + msg.jarFileName)
       ChainCodeMgr.initialChainCode(msg.userName,msg.chainname,msg.chaincodeName,msg.chaincodeVersion)
 
-/*      val loader = new NewCCLoader
-      loader.loadJarFile(ccDirectory + "/" + msg.jarFileName)
-
-      val chainCode = Class.forName(msg.chaincodeClassFullName).newInstance().asInstanceOf[ChainCodeInterface]
-
-      chainCode.init
-      val cchandler =new NewCCHandlerImpl
-
-      cchandler.setDbObject(DBStore.getDB(msg.chainname))
-      cchandler.init("admin","mycc","1.0")
-      chainCode.setHandler(cchandler)
-      println("local install chaincode done!")*/
       val jarfile = new File(ccDirectory + "/" + msg.jarFileName)
-      //      sender ! new InstallCCACKMsg(msg.chaincodeName,1,"OK")
       mediator ! Publish(ClusterManager.topicName,new InstallCCEventMsg(selfAddress,msg.userName,msg.chainname,msg.chaincodeName,msg.chaincodeVersion,msg.chaincodeClassFullName,FileUtils.fileToBytes(jarfile)))
 
 
     case msg:InvokeChainCodeMsg =>
-      println("InvokeChainCodeMsg")
+      println(s"InvokeChainCodeMsg:$msg")
+      //todo to store chaincode based on chain / user ???
+      val chaincodeOpt = ChainCodeMgr.getChainCode(msg.chaincodeName)
+      chaincodeOpt match {
+        case Some(chaincode) =>
+          val res = chaincode.invoke(msg.methodName,msg.params)
+          println(s"res is $res")
+
+        case None =>
+          println(s"no chaincode found :${msg.chaincodeName}")
+      }
+
+      mediator ! Publish(ClusterManager.topicName,new InvokeCCEventMsg(msg.userName,msg.chainname,msg.chaincodeName,msg.chaincodeVersion,msg.methodName,msg.params))
   }
 }

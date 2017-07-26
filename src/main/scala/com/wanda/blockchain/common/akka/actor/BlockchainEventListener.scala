@@ -72,6 +72,17 @@ class BlockchainEventListener extends Actor{
         }
       }
 
+    case msg:InvokeCCEventMsg=>
+      //todo just for test, need to change to proposal and commit transaction
+      println(s"got the InvokeCCEventMsg:$msg")
+      val ccOpt = ChainCodeMgr.getChainCode(msg.chaincodeName)
+      ccOpt match {
+        case Some(chaincode) =>
+          val res = chaincode.invoke(msg.methodName,msg.params)
+          println(s"res:$res")
+        case None => println(s"no chaincode found:${msg.chaincodeName}")
+      }
+
 
 
 
