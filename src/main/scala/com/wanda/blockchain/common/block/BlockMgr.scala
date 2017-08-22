@@ -88,24 +88,24 @@ object BlockMgr {
           bl.setInBlockHash(dataHash)
           dbstore.put(bl,tx)
         })
-        println("1")
+//        println("1")
 //        tx.commit()
 //        tx = dbstore.getEnv.beginTransaction(null,null)
         //1. update latest block
         val latestBlock = new LatestBlock(blockNum,block.blockHeader.dataHash)
         dbstore.put(latestBlock,tx)
-        println("2")
+//        println("2")
         //2. save the block
         val blockInfo = new BlockInfo(dataHash,blockNum,block.toBytes)
         dbstore.put(blockInfo,tx)
-        println("3")
+//        println("3")
         //3. update the blockchain info
         val blockChainInfo = new BlockChainInfo(chainName,blockNum,dataHash,block.blockHeader.previousHash)
         dbstore.put(blockChainInfo,tx)
         tx.commit()
         //write block file
         BlockFileMgr.writeBlock(block,blockNum)
-
+        println("write blockfile finished!")
       }
 
       true

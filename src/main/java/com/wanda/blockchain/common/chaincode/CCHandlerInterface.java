@@ -1,6 +1,6 @@
 package com.wanda.blockchain.common.chaincode;
 
-import com.wanda.blockchain.common.block.TransInfo;
+import com.wanda.blockchain.common.block.BlockTrans;
 
 import java.util.ArrayList;
 
@@ -25,6 +25,4 @@ public interface CCHandlerInterface {
     void start(String methodName, ArrayList<String> params) ;
 
     void end() ;
-
-
 }

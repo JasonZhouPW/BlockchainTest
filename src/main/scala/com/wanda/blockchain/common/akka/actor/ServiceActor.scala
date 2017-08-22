@@ -7,6 +7,7 @@ import akka.cluster.Cluster
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Publish
 import com.wanda.blockchain.common.akka.cluster.ClusterManager
+import com.wanda.blockchain.common.block.BlockMgr
 import com.wanda.blockchain.common.chaincode.{ChainCodeInterface, ChainCodeMgr, NewCCHandlerImpl, NewCCLoader}
 import com.wanda.blockchain.common.db.{DBProvider, DBStore}
 import com.wanda.blockchain.common.util.FileUtils
@@ -67,10 +68,18 @@ class ServiceActor extends Actor{
           val res = chaincode.invoke(msg.methodName,msg.params)
           println(s"res is $res")
 
+          //todo for test locally
+          val cchandler = chaincode.getHandler.asInstanceOf[NewCCHandlerImpl]
+          val blockTrans = cchandler.getBlockTrans
+
+          BlockMgr.addBlockTrans(msg.chainname,cchandler.getBlockTrans)
+          BlockMgr.serializeBlock(msg.chainname)
+
+
         case None =>
           println(s"no chaincode found :${msg.chaincodeName}")
       }
 
-      mediator ! Publish(ClusterManager.topicName,new InvokeCCEventMsg(msg.userName,msg.chainname,msg.chaincodeName,msg.chaincodeVersion,msg.methodName,msg.params))
+//      mediator ! Publish(ClusterManager.topicName,new InvokeCCEventMsg(msg.userName,msg.chainname,msg.chaincodeName,msg.chaincodeVersion,msg.methodName,msg.params))
   }
 }

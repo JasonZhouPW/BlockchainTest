@@ -13,7 +13,7 @@ object TestChainCode extends App{
 
 
   val directory = "c:/work/temp/testjar"
-  val directory2 = "C:\\work\\go\\src\\github.com\\hyperledger\\TestJarLoad\\target"
+//  val directory2 = "C:\\work\\go\\src\\github.com\\hyperledger\\TestJarLoad\\target"
   val jarfile = "TestJarLoad-1.0-SNAPSHOT.jar"
   val chainName = "MyCC"
   val loader = new NewCCLoader
@@ -21,7 +21,7 @@ object TestChainCode extends App{
 //  ClassLoaderUtil.releaseLoader(loader)
   //test load mutiple jars
 
-//    BlockMgr.initChain(chainName)
+    BlockMgr.initChain(chainName)
   val chainCode = Class.forName("com.test.MyCC").newInstance().asInstanceOf[ChainCodeInterface]
   println(chainCode)
 
