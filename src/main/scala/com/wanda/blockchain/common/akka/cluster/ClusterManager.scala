@@ -15,6 +15,8 @@ object ClusterManager {
 
   val topicName = "BlockProposal"
 
+  val consensusTopicName = "BlockConsensus"
+
   var system:ActorSystem = _
 
   var cluster:Cluster = _

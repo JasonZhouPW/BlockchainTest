@@ -8,9 +8,12 @@ import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Publish
 import com.wanda.blockchain.common.akka.cluster.ClusterManager
 import com.wanda.blockchain.common.block.BlockMgr
-import com.wanda.blockchain.common.chaincode.{ChainCodeInterface, ChainCodeMgr, NewCCHandlerImpl, NewCCLoader}
-import com.wanda.blockchain.common.db.{DBProvider, DBStore}
-import com.wanda.blockchain.common.util.FileUtils
+import com.wanda.blockchain.common.chaincode.{ChainCodeMgr, NewCCHandlerImpl}
+import com.wanda.blockchain.common.consensus.pbft.View
+import com.wanda.blockchain.common.db.DBProvider
+import com.wanda.blockchain.common.util.{DigestUtil, FileUtils}
+
+import scala.collection.mutable.{Map => mMap}
 
 
 /**
@@ -30,6 +33,12 @@ class ServiceActor extends Actor{
   val selfAddress = Cluster(context.system).selfAddress
 
   val ccDirectory = "c:/work/temp/testjar"
+
+  @volatile private var count:Long = 0
+
+  @volatile private var viewNo:Long = 0
+
+  private var stateMap:mMap[Long,Int] = mMap[Long,Int]()
 
   override def receive: Receive = {
 
@@ -55,8 +64,22 @@ class ServiceActor extends Actor{
       ChainCodeMgr.installChainCode(msg.chaincodeName,msg.chaincodeClassFullName,ccDirectory + "/" + msg.jarFileName)
       ChainCodeMgr.initialChainCode(msg.userName,msg.chainname,msg.chaincodeName,msg.chaincodeVersion)
 
+      //make new pbft preprepare message
       val jarfile = new File(ccDirectory + "/" + msg.jarFileName)
-      mediator ! Publish(ClusterManager.topicName,new InstallCCEventMsg(selfAddress,msg.userName,msg.chainname,msg.chaincodeName,msg.chaincodeVersion,msg.chaincodeClassFullName,FileUtils.fileToBytes(jarfile)))
+
+      this.viewNo += 1
+      val timestamp = System.currentTimeMillis()
+      val datahash = DigestUtil.digest(FileUtils.fileToBytes(jarfile))
+      val view = new View(this.viewNo,timestamp,datahash)
+
+      this.count += 1
+
+      val cc = new InstallCCEventMsg(selfAddress,msg.userName,msg.chainname,msg.chaincodeName,msg.chaincodeVersion,msg.chaincodeClassFullName,FileUtils.fileToBytes(jarfile))
+      val prepreparemsg = new PrePrepareInstallCCMsg(view,this.count,ActorMessage.digestMessage(cc),cc)
+
+      mediator ! Publish(ClusterManager.consensusTopicName,prepreparemsg)
+
+//      mediator ! Publish(ClusterManager.topicName,cc)
 
 
     case msg:InvokeChainCodeMsg =>

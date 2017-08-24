@@ -47,7 +47,7 @@ class BlockchainEventListener extends Actor{
       //this is for the
       println(s"selfAddress is $selfAddress")
       val fromAddress = msg.fromAddress
-      if(msg.fromAddress.toString == selfAddress.toString){
+      if(fromAddress.toString == selfAddress.toString){
         //this is published by self ,do nothing..
         println("this is published by self ,do nothing..")
       }else{
